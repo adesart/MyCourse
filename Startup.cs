@@ -15,8 +15,6 @@ namespace MyCourse
     {
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -30,7 +28,8 @@ namespace MyCourse
             {
                 app.UseDeveloperExceptionPage();
 
-                lifetime.ApplicationStarted.Register(() => 
+                //Aggiorniamo un file per notificare al BrowserSync che deve aggiornare la pagina
+                lifetime.ApplicationStarted.Register(() =>
                 {
                     string filePath = Path.Combine(env.ContentRootPath, "bin/reload.txt");
                     File.WriteAllText(filePath, DateTime.Now.ToString());
@@ -38,21 +37,12 @@ namespace MyCourse
             }
             app.UseStaticFiles();
             
-            // E' IL VECCHIO MIDDLEWARE
-            // app.Run(async (context) =>
-            // {
-            //     string nome = context.Request.Query["nome"];
-            //     await context.Response.WriteAsync($"Hello {nome}!");
-            // });
-
-            // ORA DOBBIAMO INSERIRE UN MIDDLEWARE DI ROUTING
-            // app.UseMvcWithDefaultRoute();   // MODALITA' PIU' DIRETTA
-            // OPPURE:
-            app.UseMvc(routeBuilder =>
+            //app.UseMvcWithDefaultRoute();
+            app.UseMvc(routeBuilder => 
             {
+                // Esempio di percorso conforme al template route: /courses/detail/5
                 routeBuilder.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
-
         }
     }
 }
